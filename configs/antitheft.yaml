@@ -1,11 +1,11 @@
 ---
-hat: "hat157159"
-trousers: "trousers49175"
-shield: "shield70653"
-shirt: "shirt31980"
-pack: "pack97401"
-shoes: "boots125965"
-mask: "mask337070"
-armor: "scalemail265529"
+hat: ""
+trousers: ""
+shield: ""
+shirt: ""
+pack: "pack151385"
+shoes: "shoes314309"
+robes: "robes331031"
+armor: "ringmail290691"
 balance_items: 
   - armor
