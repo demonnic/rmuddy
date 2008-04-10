@@ -54,11 +54,9 @@ class Tarot < BasePlugin
   #this is the receptacle into which your commands for non-hermit flinging should go
   def tarot_card (card = '', target = 'ground')
     #determine what card to outd, outd it, then charge it
-    warn("Ok, we're gonna use #{card} on #{target}")
     @card_to_fling = card.downcase
     @target = target.downcase
     if @tarotcards.include?(@card_to_fling)
-      warn("It's a real tarot card!")
       if @groundonly.include?(@card_to_fling)
         @target = "ground"
         send_kmuddy_command("outd #{@card_to_fling}")
@@ -140,12 +138,18 @@ class Tarot < BasePlugin
   #imported from the mass inscriber
   def mass_inscribe(number_to_inscribe, type_to_inscribe)
     @number_to_inscribe = number_to_inscribe.to_i
-    @type_to_inscribe = type_to_inscribe.to_s
+    @type_to_inscribe = type_to_inscribe.to_s.downcase
     @batch_total = number_to_inscribe.to_i
-    set_kmuddy_variable("number_to_inscribe", @number_to_inscribe)
-    set_kmuddy_variable("type_to_inscribe", @type_to_inscribe)
-    warn("Inscriber Plugin: Ready to inscribe #{@number_to_inscribe} #{@type_to_inscribe}")
-    warn("Use begin_inscribing to start.")
+    
+    if @tarotcards.include?(@type_to_inscribe)
+      set_kmuddy_variable("number_to_inscribe", @number_to_inscribe)
+      set_kmuddy_variable("type_to_inscribe", @type_to_inscribe)
+      send_kmuddy_command("outd #{@number_to_inscribe} blank")
+      warn("Inscriber Plugin: Ready to inscribe #{@number_to_inscribe} #{@type_to_inscribe}")      
+      warn("Use begin_inscribing to start.")
+    else 
+      warn("You can't inscribe that, it's not a valid tarot card")
+    end
   end
 
   #begin the inscription process
@@ -171,7 +175,8 @@ class Tarot < BasePlugin
   #pretty obvious
   def out_of_mana! 
     @inscribing = false  #if we're out of mana, we're not inscribing
-    plugins[Sipper].enable
+    disabled_plugins[Sipper].enable unless disabled_plugins[Sipper].nil?
+    plugins[Sipper].should_i_sip?
     send_kmuddy_command("sip mana")  #so we need to sip some mana
   end
   
